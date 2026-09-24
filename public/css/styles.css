@@ -11,9 +11,9 @@
     --bg: #eef1f4;
     --surface: #ffffff;
     --border: #e1e5ea;
-    --text: #2c4468;
-    --text-dim: #5d7391;
-    --text-faint: #8799b0;
+    --text: #1a56db;
+    --text-dim: #3569cf;
+    --text-faint: #7b93c6;
     color-scheme: light;
   }
   :root[data-theme="dark"], :root:not([data-theme="light"]) {
