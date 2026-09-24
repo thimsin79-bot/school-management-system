@@ -118,11 +118,11 @@
   .id-barcode { display: block; height: 28px; width: 130px; margin-top: 5px; max-width: 100%; }
 
   /* Student table - white look */
-  #view-students .table-wrap { background: #e3f0fd; border-color: #c6dcf3; }
-  #view-students .table-wrap th { background: #cfe5fa; color: #2456b3; }
-  #view-students .table-wrap td { background: #eef6ff; }
-  #view-students .table-wrap tr:hover td { background: #dbeaff; }
-  #view-students .avatar-sm { background: #d3e6fb; color: #2456b3; }
+  #view-students .table-wrap { background: #c3dcf7; border-color: #9cc0e8; }
+  #view-students .table-wrap th { background: #2f6bd1; color: #ffffff; }
+  #view-students .table-wrap td { background: #d3e5f9; }
+  #view-students .table-wrap tr:hover td { background: #bcd6f3; }
+  #view-students .avatar-sm { background: #2f6bd1; color: #ffffff; }
   .muted { color: var(--text-dim); }
   .avatar-sm { width: 26px; height: 26px; border-radius: 50%; background: var(--bg); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text-dim); margin-right: 8px; vertical-align: middle; }
 
