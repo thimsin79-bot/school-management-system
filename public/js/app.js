@@ -15,11 +15,11 @@
     const c1 = uid();
     const sMath = uid(), sEng = uid(), sSci = uid();
     const students = [
-      {id: uid(), name:"Sopheak Chan", gender:"Male", dob:"2012-03-11", classRoomId:c1, fatherName:"Mr. Sokha Chan", fatherContact:"012 345 111", motherName:"Mrs. Chanthy Chan", motherContact:"012 345 211"},
-      {id: uid(), name:"Dara Meas", gender:"Female", dob:"2012-06-20", classRoomId:c1, fatherName:"Mr. Bora Meas", fatherContact:"012 345 112", motherName:"Mrs. Lina Meas", motherContact:"012 345 212"},
-      {id: uid(), name:"Vanna Sok", gender:"Male", dob:"2012-01-02", classRoomId:c1, fatherName:"Mr. Piseth Sok", fatherContact:"012 345 113", motherName:"Mrs. Kanha Sok", motherContact:"012 345 213"},
-      {id: uid(), name:"Bopha Ly", gender:"Female", dob:"2012-09-14", classRoomId:c1, fatherName:"Mr. Chetra Ly", fatherContact:"012 345 114", motherName:"Mrs. Sreynich Ly", motherContact:"012 345 214"},
-      {id: uid(), name:"Rithy Pen", gender:"Male", dob:"2012-11-30", classRoomId:c1, fatherName:"Mr. Vuthy Pen", fatherContact:"012 345 115", motherName:"Mrs. Sopheap Pen", motherContact:"012 345 215"},
+      {id: uid(), studentId:"STU-1001", name:"Sopheak Chan", gender:"Male", dob:"2012-03-11", classRoomId:c1, fatherName:"Mr. Sokha Chan", fatherContact:"012 345 111", motherName:"Mrs. Chanthy Chan", motherContact:"012 345 211"},
+      {id: uid(), studentId:"STU-1002", name:"Dara Meas", gender:"Female", dob:"2012-06-20", classRoomId:c1, fatherName:"Mr. Bora Meas", fatherContact:"012 345 112", motherName:"Mrs. Lina Meas", motherContact:"012 345 212"},
+      {id: uid(), studentId:"STU-1003", name:"Vanna Sok", gender:"Male", dob:"2012-01-02", classRoomId:c1, fatherName:"Mr. Piseth Sok", fatherContact:"012 345 113", motherName:"Mrs. Kanha Sok", motherContact:"012 345 213"},
+      {id: uid(), studentId:"STU-1004", name:"Bopha Ly", gender:"Female", dob:"2012-09-14", classRoomId:c1, fatherName:"Mr. Chetra Ly", fatherContact:"012 345 114", motherName:"Mrs. Sreynich Ly", motherContact:"012 345 214"},
+      {id: uid(), studentId:"STU-1005", name:"Rithy Pen", gender:"Male", dob:"2012-11-30", classRoomId:c1, fatherName:"Mr. Vuthy Pen", fatherContact:"012 345 115", motherName:"Mrs. Sopheap Pen", motherContact:"012 345 215"},
     ];
     return {
       teachers: [
@@ -103,10 +103,11 @@
   function renderStudents(){
     fillSelect(document.getElementById("studentClassSelect"), state.classRooms.map(c=>({id:c.id,label:c.name})));
     const body = document.getElementById("studentsBody");
-    if (state.students.length===0){ body.innerHTML = `<tr class="empty-row"><td colspan="6">No students yet — add the first one above.</td></tr>`; return; }
+    if (state.students.length===0){ body.innerHTML = `<tr class="empty-row"><td colspan="7">No students yet — add the first one above.</td></tr>`; return; }
     body.innerHTML = state.students.map(s=>`
       <tr>
         <td><span class="avatar-sm">${initials(s.name)}</span>${escapeHtml(s.name)}</td>
+        <td class="mono">${escapeHtml(s.studentId||"—")}</td>
         <td>${escapeHtml(s.gender||"—")}</td>
         <td>${escapeHtml(classroomName(s.classRoomId))}</td>
         <td>${s.fatherName||s.fatherContact ? `${escapeHtml(s.fatherName||"—")}${s.fatherContact?`<br><span class="muted" style="font-size:11px;">${escapeHtml(s.fatherContact)}</span>`:""}` : "—"}</td>
@@ -126,7 +127,7 @@
       if (!s) return;
       editingStudentId = s.id;
       const f = document.getElementById("studentForm");
-      f.name.value = s.name||""; f.gender.value = s.gender||"Female"; f.dob.value = s.dob||"";
+      f.name.value = s.name||""; f.studentId.value = s.studentId||""; f.gender.value = s.gender||"Female"; f.dob.value = s.dob||"";
       f.classRoomId.value = s.classRoomId||""; f.fatherName.value = s.fatherName||""; f.fatherContact.value = s.fatherContact||"";
       f.motherName.value = s.motherName||""; f.motherContact.value = s.motherContact||"";
       document.getElementById("studentSubmitBtn").textContent = "Update student";
@@ -144,7 +145,7 @@
   document.getElementById("studentForm").addEventListener("submit", e=>{
     e.preventDefault(); const f = new FormData(e.target);
     const name = f.get("name").trim(); if(!name) return;
-    const payload = {name, gender:f.get("gender"), dob:f.get("dob")||null, classRoomId:f.get("classRoomId")||null, fatherName:f.get("fatherName").trim()||null, fatherContact:f.get("fatherContact").trim()||null, motherName:f.get("motherName").trim()||null, motherContact:f.get("motherContact").trim()||null};
+    const payload = {name, studentId:f.get("studentId").trim()||null, gender:f.get("gender"), dob:f.get("dob")||null, classRoomId:f.get("classRoomId")||null, fatherName:f.get("fatherName").trim()||null, fatherContact:f.get("fatherContact").trim()||null, motherName:f.get("motherName").trim()||null, motherContact:f.get("motherContact").trim()||null};
     if (editingStudentId){
       const s = state.students.find(x=>x.id===editingStudentId);
       if (s) Object.assign(s, payload);
