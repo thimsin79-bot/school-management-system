@@ -1,0 +1,17 @@
+﻿{
+  "name": "school-management-system",
+  "version": "1.0.0",
+  "description": "A comprehensive school management system built with HTML, CSS, and JavaScript",
+  "main": "public/index.html",
+  "scripts": {
+    "start": "npx http-server public -p 8080 -o",
+    "dev": "npx live-server public --open"
+  },
+  "keywords": [
+    "school",
+    "management",
+    "students",
+    "education"
+  ],
+  "license": "MIT"
+}
