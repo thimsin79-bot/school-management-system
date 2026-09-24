@@ -114,6 +114,8 @@
     ];
     document.getElementById("statCards").innerHTML = cards.map(c=>`
       <div class="stat-card ${c.cls}"><div class="num">${c.n}</div><div class="lbl">${c.l}</div><div class="glyph">${c.g}</div></div>`).join("");
+  }
+  function renderIdcards(){
     fillSelect(document.getElementById("idcardStudentSelect"), state.students.map(s=>({id:s.id,label:`${s.name} (${s.studentId||"—"})`})), "All students");
   }
 
@@ -818,7 +820,7 @@
   });
 
   function renderAll(){
-    renderDashboard(); renderStudents(); renderTeachers(); renderParents(); renderSubjects();
+    renderDashboard(); renderStudents(); renderIdcards(); renderTeachers(); renderParents(); renderSubjects();
     renderClassrooms(); renderSchedule(); renderAttendance(); renderExams(); renderResultsView(); renderUsers(); renderNotices();
   }
   renderAll();

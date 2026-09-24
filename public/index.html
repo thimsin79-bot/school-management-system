@@ -24,6 +24,7 @@
       <div class="sidebar-label">Dashboard</div>
       <div class="nav-item active" data-view="dashboard"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Statistics</div>
       <div class="nav-item" data-view="students"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Student</div>
+      <div class="nav-item" data-view="idcards"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>ID Card</div>
       <div class="nav-item" data-view="teachers"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>Teacher</div>
       <div class="nav-item" data-view="parents"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Parents</div>
       <div class="nav-item" data-view="subjects"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Subject</div>
@@ -43,14 +44,6 @@
         <section class="view active" id="view-dashboard">
           <div class="crumbs"><h1>School <span class="dim">Overview</span></h1><div class="crumb-path">School &gt; Stat</div></div>
           <div class="stat-cards" id="statCards"></div>
-          <div class="card" style="margin-top:24px;">
-            <h3 style="margin:0 0 14px; font-size:16px; color:var(--text-dim);">ID Card Printing</h3>
-            <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;">
-              <div style="min-width:240px; flex:1; max-width:360px;"><label>Student</label>
-                <select id="idcardStudentSelect"></select></div>
-              <button class="btn" id="idcardPrintBtn">Print ID card</button>
-            </div>
-          </div>
         </section>
 
         <!-- STUDENTS -->
@@ -78,6 +71,19 @@
             <thead><tr><th>ID</th><th>Student</th><th>Barcode</th><th>Gender</th><th>Class</th><th>Father</th><th>Mother</th><th></th></tr></thead>
             <tbody id="studentsBody"></tbody>
           </table></div>
+        </section>
+
+        <!-- ID CARDS -->
+        <section class="view" id="view-idcards">
+          <div class="crumbs"><h1>ID Card <span class="dim">Printing</span></h1><div class="crumb-path">Dashboard &gt; ID Card</div></div>
+          <div class="card">
+            <p class="view-desc" style="margin:0 0 16px;">Select one student to print a single ID card, or choose "All students" to print the whole set as a sheet.</p>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;">
+              <div style="min-width:260px; flex:1; max-width:400px;"><label>Student</label>
+                <select id="idcardStudentSelect"></select></div>
+              <button class="btn" id="idcardPrintBtn">Print ID card</button>
+            </div>
+          </div>
         </section>
 
         <!-- TEACHERS -->
