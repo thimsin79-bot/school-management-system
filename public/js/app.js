@@ -106,7 +106,7 @@
     if (state.students.length===0){ body.innerHTML = `<tr class="empty-row"><td colspan="7">No students yet — add the first one above.</td></tr>`; return; }
     body.innerHTML = state.students.map(s=>`
       <tr>
-        <td class="mono">${escapeHtml(s.studentId||"—")}</td>
+        <td class="mono">${escapeHtml(s.studentId||"—")}${s.studentId?`<svg class="id-barcode" data-barcode="${escapeHtml(s.studentId)}"></svg>`:""}</td>
         <td><span class="avatar-sm">${initials(s.name)}</span>${escapeHtml(s.name)}</td>
         <td>${escapeHtml(s.gender||"—")}</td>
         <td>${escapeHtml(classroomName(s.classRoomId))}</td>
@@ -114,6 +114,9 @@
         <td>${s.motherName||s.motherContact ? `${escapeHtml(s.motherName||"—")}${s.motherContact?`<br><span class="muted" style="font-size:11px;">${escapeHtml(s.motherContact)}</span>`:""}` : "—"}</td>
         <td style="text-align:right; white-space:nowrap;"><button class="link-btn" data-edit-student="${s.id}">Edit</button> &nbsp;·&nbsp; <button class="link-btn danger" data-del-student="${s.id}">Remove</button></td>
       </tr>`).join("");
+    body.querySelectorAll("[data-barcode]").forEach(svg=>{
+      try { JsBarcode(svg, svg.dataset.barcode, {format:"CODE128", displayValue:false, height:28, width:1.5, margin:0, background:"transparent"}); } catch(e){}
+    });
     body.querySelectorAll("[data-del-student]").forEach(b=>b.addEventListener("click", ()=>{
       const id = b.dataset.delStudent;
       state.students = state.students.filter(s=>s.id!==id);
