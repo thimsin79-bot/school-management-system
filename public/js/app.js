@@ -103,11 +103,12 @@
   function renderStudents(){
     fillSelect(document.getElementById("studentClassSelect"), state.classRooms.map(c=>({id:c.id,label:c.name})));
     const body = document.getElementById("studentsBody");
-    if (state.students.length===0){ body.innerHTML = `<tr class="empty-row"><td colspan="7">No students yet — add the first one above.</td></tr>`; return; }
+    if (state.students.length===0){ body.innerHTML = `<tr class="empty-row"><td colspan="8">No students yet — add the first one above.</td></tr>`; return; }
     body.innerHTML = state.students.map(s=>`
       <tr>
-        <td class="mono">${escapeHtml(s.studentId||"—")}${s.studentId?`<svg class="id-barcode" data-barcode="${escapeHtml(s.studentId)}"></svg>`:""}</td>
+        <td class="mono">${escapeHtml(s.studentId||"—")}</td>
         <td><span class="avatar-sm">${initials(s.name)}</span>${escapeHtml(s.name)}</td>
+        <td>${s.studentId?`<svg class="id-barcode" data-barcode="${escapeHtml(s.studentId)}"></svg>`:"—"}</td>
         <td>${escapeHtml(s.gender||"—")}</td>
         <td>${escapeHtml(classroomName(s.classRoomId))}</td>
         <td>${s.fatherName||s.fatherContact ? `${escapeHtml(s.fatherName||"—")}${s.fatherContact?`<br><span class="muted" style="font-size:11px;">${escapeHtml(s.fatherContact)}</span>`:""}` : "—"}</td>
