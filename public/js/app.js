@@ -106,8 +106,8 @@
     if (state.students.length===0){ body.innerHTML = `<tr class="empty-row"><td colspan="7">No students yet — add the first one above.</td></tr>`; return; }
     body.innerHTML = state.students.map(s=>`
       <tr>
-        <td><span class="avatar-sm">${initials(s.name)}</span>${escapeHtml(s.name)}</td>
         <td class="mono">${escapeHtml(s.studentId||"—")}</td>
+        <td><span class="avatar-sm">${initials(s.name)}</span>${escapeHtml(s.name)}</td>
         <td>${escapeHtml(s.gender||"—")}</td>
         <td>${escapeHtml(classroomName(s.classRoomId))}</td>
         <td>${s.fatherName||s.fatherContact ? `${escapeHtml(s.fatherName||"—")}${s.fatherContact?`<br><span class="muted" style="font-size:11px;">${escapeHtml(s.fatherContact)}</span>`:""}` : "—"}</td>
