@@ -668,3 +668,46 @@
       state.notices = state.notices.filter(n=>n.id!==id);
       if (editingNoticeId === id) cancelNoticeEdit();
       save(state); renderAll();
+    }));
+    list.querySelectorAll("[data-edit-notice]").forEach(b=>b.addEventListener("click", ()=>{
+      const n = state.notices.find(x=>x.id===b.dataset.editNotice);
+      if (!n) return;
+      editingNoticeId = n.id;
+      const f = document.getElementById("noticeForm");
+      f.title.value = n.title||""; f.body.value = n.body||""; f.audience.value = n.audience||"all";
+      f.classRoomId.value = n.classRoomId||""; f.pinned.checked = !!n.pinned;
+      document.getElementById("noticeSubmitBtn").textContent = "Update notice";
+      document.getElementById("noticeCancelBtn").style.display = "inline";
+      f.scrollIntoView({behavior:"smooth", block:"start"});
+    }));
+  }
+  function cancelNoticeEdit(){
+    editingNoticeId = null;
+    document.getElementById("noticeForm").reset();
+    document.getElementById("noticeSubmitBtn").textContent = "Post notice";
+    document.getElementById("noticeCancelBtn").style.display = "none";
+  }
+  document.getElementById("noticeCancelBtn").addEventListener("click", cancelNoticeEdit);
+  document.getElementById("noticeForm").addEventListener("submit", e=>{
+    e.preventDefault(); const f = new FormData(e.target);
+    const title = f.get("title").trim(), body = f.get("body").trim();
+    if (!title||!body) return;
+    const audience = f.get("audience");
+    const payload = {title, body, audience, classRoomId: audience==="class"?(f.get("classRoomId")||null):null, pinned: f.get("pinned")==="on"};
+    if (editingNoticeId){
+      const n = state.notices.find(x=>x.id===editingNoticeId);
+      if (n) Object.assign(n, payload);
+      cancelNoticeEdit();
+    } else {
+      state.notices.push({id:uid(), ...payload, publishedAt: Date.now()});
+      e.target.reset();
+    }
+    save(state); renderAll();
+  });
+
+  function renderAll(){
+    renderDashboard(); renderStudents(); renderTeachers(); renderParents(); renderSubjects();
+    renderClassrooms(); renderSchedule(); renderAttendance(); renderExams(); renderResultsView(); renderUsers(); renderNotices();
+  }
+  renderAll();
+})();
