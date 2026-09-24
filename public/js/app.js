@@ -100,11 +100,22 @@
 
   // ---------- STUDENTS ----------
   let editingStudentId = null;
+  let studentSearch = "";
+  let studentClassFilter = "";
   function renderStudents(){
     fillSelect(document.getElementById("studentClassSelect"), state.classRooms.map(c=>({id:c.id,label:c.name})));
+    fillSelect(document.getElementById("studentClassFilter"), state.classRooms.map(c=>({id:c.id,label:c.name})), "All classes");
+    document.getElementById("studentClassFilter").value = studentClassFilter;
+    const q = studentSearch.trim().toLowerCase();
+    let list = state.students;
+    if (studentClassFilter) list = list.filter(s=>s.classRoomId===studentClassFilter);
+    if (q) list = list.filter(s=>[s.name, s.studentId, s.gender, s.fatherName, s.fatherContact, s.motherName, s.motherContact].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)));
+    const countEl = document.getElementById("studentCount");
+    countEl.textContent = (q||studentClassFilter) ? `${list.length} of ${state.students.length}` : "";
     const body = document.getElementById("studentsBody");
     if (state.students.length===0){ body.innerHTML = `<tr class="empty-row"><td colspan="8">No students yet — add the first one above.</td></tr>`; return; }
-    body.innerHTML = state.students.map(s=>`
+    if (list.length===0){ body.innerHTML = `<tr class="empty-row"><td colspan="8">No students match your search.</td></tr>`; return; }
+    body.innerHTML = list.map(s=>`
       <tr>
         <td class="mono">${escapeHtml(s.studentId||"—")}</td>
         <td><span class="avatar-sm">${initials(s.name)}</span>${escapeHtml(s.name)}</td>
@@ -160,6 +171,8 @@
     }
     save(state); renderAll();
   });
+  document.getElementById("studentSearch").addEventListener("input", function(){ studentSearch = this.value; renderStudents(); });
+  document.getElementById("studentClassFilter").addEventListener("change", function(){ studentClassFilter = this.value; renderStudents(); });
 
   // ---------- TEACHERS ----------
   let editingTeacherId = null;

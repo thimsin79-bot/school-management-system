@@ -60,6 +60,11 @@
             <div><label>Mother contact</label><input name="motherContact" placeholder="012 345 678" /></div>
             <div class="full" style="display:flex; gap:10px;"><button class="btn" type="submit" id="studentSubmitBtn">Add student</button><button class="link-btn" type="button" id="studentCancelBtn" style="display:none;">Cancel edit</button></div>
           </form>
+          <div class="filter-bar">
+            <input id="studentSearch" type="search" placeholder="Search name, ID, parent…" />
+            <select id="studentClassFilter"><option value="">All classes</option></select>
+            <span class="filter-count" id="studentCount"></span>
+          </div>
           <div class="table-wrap"><table>
             <thead><tr><th>ID</th><th>Student</th><th>Barcode</th><th>Gender</th><th>Class</th><th>Father</th><th>Mother</th><th></th></tr></thead>
             <tbody id="studentsBody"></tbody>
