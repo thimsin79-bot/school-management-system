@@ -126,12 +126,13 @@
   .pill.orange { background: rgba(226,161,58,0.16); color: var(--orange-d); }
   .pill.gray { background: rgba(107,118,132,0.12); color: var(--text-dim); }
   .mono { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--text-dim); }
-  .id-barcode { display: block; height: 28px; width: 130px; margin-top: 5px; max-width: 100%; }
+  .id-barcode { display: block; height: 28px; width: 130px; margin-top: 5px; max-width: 100%; background: #14314f; border-radius: 6px; padding: 2px 6px; }
 
   /* Student table accents */
   #view-students .avatar-sm { background: #2f6bd1; color: #ffffff; }
   .muted { color: var(--text-dim); }
-  .avatar-sm { width: 26px; height: 26px; border-radius: 50%; background: var(--bg); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text-dim); margin-right: 8px; vertical-align: middle; }
+  .avatar-sm { width: 26px; height: 26px; border-radius: 50%; background: var(--bg); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text-dim); margin-right: 8px; vertical-align: middle; overflow: hidden; flex-shrink: 0; }
+  .avatar-sm img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
 
   /* Schedule grid */
   .week-grid { display: grid; grid-template-columns: repeat(6,1fr); border: 1px solid var(--border); background: var(--surface); border-radius: 8px; min-width: 760px; margin-bottom: 20px; overflow: hidden; }

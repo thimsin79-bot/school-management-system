@@ -9,6 +9,24 @@
   function escapeHtml(str){ return String(str).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
   function formatDate(iso){ const d = new Date(iso+"T00:00:00"); return isNaN(d) ? iso : d.toLocaleDateString(); }
   function initials(name){ return (name||"").split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase(); }
+  function fileToDataURL(file, cb){
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const size = 160;
+        const canvas = document.createElement("canvas");
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        const s = Math.min(img.width, img.height);
+        ctx.drawImage(img, (img.width-s)/2, (img.height-s)/2, s, s, 0, 0, size, size);
+        cb(canvas.toDataURL("image/jpeg", 0.75));
+      };
+      img.onerror = () => cb(null);
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
 
   function seedData(){
     const t1 = uid(), t2 = uid();
@@ -118,16 +136,16 @@
     body.innerHTML = list.map(s=>`
       <tr>
         <td class="mono">${escapeHtml(s.studentId||"—")}</td>
-        <td><span class="avatar-sm">${initials(s.name)}</span>${escapeHtml(s.name)}</td>
+        <td><span class="avatar-sm">${s.photo?`<img src="${s.photo}" alt="">`:`${initials(s.name)}`}</span>${escapeHtml(s.name)}</td>
         <td>${s.studentId?`<svg class="id-barcode" data-barcode="${escapeHtml(s.studentId)}"></svg>`:"—"}</td>
         <td>${escapeHtml(s.gender||"—")}</td>
         <td>${escapeHtml(classroomName(s.classRoomId))}</td>
         <td>${s.fatherName||s.fatherContact ? `${escapeHtml(s.fatherName||"—")}${s.fatherContact?`<br><span class="muted" style="font-size:11px;">${escapeHtml(s.fatherContact)}</span>`:""}` : "—"}</td>
         <td>${s.motherName||s.motherContact ? `${escapeHtml(s.motherName||"—")}${s.motherContact?`<br><span class="muted" style="font-size:11px;">${escapeHtml(s.motherContact)}</span>`:""}` : "—"}</td>
-        <td style="text-align:right; white-space:nowrap;"><button class="link-btn" data-edit-student="${s.id}">Edit</button> &nbsp;·&nbsp; <button class="link-btn danger" data-del-student="${s.id}">Remove</button></td>
+        <td style="text-align:right; white-space:nowrap;"><button class="link-btn" data-edit-student="${s.id}">Edit</button> &nbsp;·&nbsp; <button class="link-btn" data-idcard-student="${s.id}">ID Card</button> &nbsp;·&nbsp; <button class="link-btn danger" data-del-student="${s.id}">Remove</button></td>
       </tr>`).join("");
     body.querySelectorAll("[data-barcode]").forEach(svg=>{
-      try { JsBarcode(svg, svg.dataset.barcode, {format:"CODE128", displayValue:false, height:28, width:1.5, margin:0, background:"transparent"}); } catch(e){}
+      try { JsBarcode(svg, svg.dataset.barcode, {format:"CODE128", displayValue:false, height:26, width:1.6, margin:0, lineColor:"#ffffff", background:"transparent"}); } catch(e){}
     });
     body.querySelectorAll("[data-del-student]").forEach(b=>b.addEventListener("click", ()=>{
       const id = b.dataset.delStudent;
@@ -149,6 +167,54 @@
       document.getElementById("studentCancelBtn").style.display = "inline";
       f.scrollIntoView({behavior:"smooth", block:"start"});
     }));
+    body.querySelectorAll("[data-idcard-student]").forEach(b=>b.addEventListener("click", ()=>{
+      const s = state.students.find(x=>x.id===b.dataset.idcardStudent);
+      if (s) openIdCard(s);
+    }));
+  }
+  function openIdCard(s){
+    const win = window.open("", "_blank", "width=440,height=660");
+    if (!win) { alert("Please allow pop-ups to print ID cards."); return; }
+    const name = escapeHtml(s.name||"—");
+    const sid = escapeHtml(s.studentId||"—");
+    const cls = escapeHtml(classroomName(s.classRoomId));
+    const dob = s.dob ? escapeHtml(formatDate(s.dob)) : "—";
+    const gender = escapeHtml(s.gender||"—");
+    const photo = s.photo
+      ? `<img class="photo" src="${s.photo}" alt="">`
+      : `<div class="photo ph-text">${escapeHtml(initials(s.name))}</div>`;
+    const school = "Student Management";
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">`
+      + `<title>Student ID Card</title>`
+      + `<style>`
+      + `body{margin:0;background:#dfe7f3;font-family:Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;}`
+      + `.id-card{width:340px;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(10,25,41,0.35);}`
+      + `.head{background:linear-gradient(135deg,#0a1929,#14314f);color:#fff;text-align:center;padding:18px 16px 14px;}`
+      + `.head .school{font-size:16px;font-weight:700;letter-spacing:.5px;}`
+      + `.head .sub{font-size:10px;opacity:.85;letter-spacing:3px;margin-top:4px;text-transform:uppercase;}`
+      + `.head .ldiv{width:38px;height:2px;background:#3b82f6;margin:8px auto 0;border-radius:2px;}`
+      + `.body{background:#fff;text-align:center;padding:0 18px 16px;}`
+      + `.photo{width:96px;height:96px;border-radius:50%;object-fit:cover;margin:-48px auto 10px;border:4px solid #fff;background:#eef2f7;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:#14314f;box-shadow:0 2px 8px rgba(20,49,79,0.2);}`
+      + `.name{font-size:18px;font-weight:700;color:#0a1929;}`
+      + `.meta{margin-top:12px;font-size:12px;color:#3f4d63;line-height:1.8;}`
+      + `.meta .k{color:#14314f;font-weight:700;}`
+      + `.barcode-box{background:#14314f;border-radius:8px;margin-top:14px;padding:10px 12px 8px;text-align:center;}`
+      + `.barcode-box svg{max-width:100%;}`
+      + `.barcode-box .bval{color:#fff;font-size:11px;letter-spacing:2px;margin-top:5px;}`
+      + `@media print{body{background:#fff;}.id-card{box-shadow:none;}}`
+      + `</style></head><body>`
+      + `<div class="id-card">`
+      + `<div class="head"><div class="school">${escapeHtml(school)}</div><div class="sub">Student ID Card</div><div class="ldiv"></div></div>`
+      + `<div class="body">${photo}<div class="name">${name}</div>`
+      + `<div class="meta"><div><span class="k">Student ID:</span> ${sid}</div>`
+      + `<div><span class="k">Class:</span> ${cls}</div>`
+      + `<div><span class="k">Gender:</span> ${gender} &nbsp;·&nbsp; <span class="k">DOB:</span> ${dob}</div></div>`
+      + `<div class="barcode-box"><svg id="bc"></svg><div class="bval">${sid}</div></div>`
+      + `</div></div>`
+      + `<script src="https:\/\/cdn.jsdelivr.net\/npm\/jsbarcode@3.11.6\/dist\/JsBarcode.all.min.js"><\/script>`
+      + `<script>try{JsBarcode("#bc",${JSON.stringify(s.studentId||"")},{format:"CODE128",displayValue:false,lineColor:"#ffffff",background:"transparent",height:48,width:1.6,margin:0});}catch(e){}setTimeout(function(){try{window.focus();window.print();}catch(e){}},500);<\/script>`
+      + `</body></html>`);
+    win.document.close();
   }
   function cancelStudentEdit(){
     editingStudentId = null;
@@ -161,15 +227,21 @@
     e.preventDefault(); const f = new FormData(e.target);
     const name = f.get("name").trim(); if(!name) return;
     const payload = {name, studentId:f.get("studentId").trim()||null, gender:f.get("gender"), dob:f.get("dob")||null, classRoomId:f.get("classRoomId")||null, fatherName:f.get("fatherName").trim()||null, fatherContact:f.get("fatherContact").trim()||null, motherName:f.get("motherName").trim()||null, motherContact:f.get("motherContact").trim()||null};
-    if (editingStudentId){
-      const s = state.students.find(x=>x.id===editingStudentId);
-      if (s) Object.assign(s, payload);
-      cancelStudentEdit();
-    } else {
-      state.students.push({id:uid(), ...payload});
-      e.target.reset();
-    }
-    save(state); renderAll();
+    const photoFile = f.get("photo");
+    const commit = img => {
+      if (img) payload.photo = img;
+      if (!editingStudentId) payload.photo = payload.photo || null;
+      if (editingStudentId){
+        const s = state.students.find(x=>x.id===editingStudentId);
+        if (s) Object.assign(s, payload);
+        cancelStudentEdit();
+      } else {
+        state.students.push({id:uid(), ...payload});
+        e.target.reset();
+      }
+      save(state); renderAll();
+    };
+    if (photoFile && photoFile.size) fileToDataURL(photoFile, commit); else commit(null);
   });
   document.getElementById("studentSearch").addEventListener("input", function(){ studentSearch = this.value; renderStudents(); });
   document.getElementById("studentClassFilter").addEventListener("change", function(){ studentClassFilter = this.value; renderStudents(); });
