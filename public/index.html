@@ -43,6 +43,14 @@
         <section class="view active" id="view-dashboard">
           <div class="crumbs"><h1>School <span class="dim">Overview</span></h1><div class="crumb-path">School &gt; Stat</div></div>
           <div class="stat-cards" id="statCards"></div>
+          <div class="card" style="margin-top:24px;">
+            <h3 style="margin:0 0 14px; font-size:16px; color:var(--text-dim);">ID Card Printing</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;">
+              <div style="min-width:240px; flex:1; max-width:360px;"><label>Student</label>
+                <select id="idcardStudentSelect"></select></div>
+              <button class="btn" id="idcardPrintBtn">Print ID card</button>
+            </div>
+          </div>
         </section>
 
         <!-- STUDENTS -->

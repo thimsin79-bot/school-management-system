@@ -114,6 +114,7 @@
     ];
     document.getElementById("statCards").innerHTML = cards.map(c=>`
       <div class="stat-card ${c.cls}"><div class="num">${c.n}</div><div class="lbl">${c.l}</div><div class="glyph">${c.g}</div></div>`).join("");
+    fillSelect(document.getElementById("idcardStudentSelect"), state.students.map(s=>({id:s.id,label:`${s.name} (${s.studentId||"—"})`})), "All students");
   }
 
   // ---------- STUDENTS ----------
@@ -172,50 +173,61 @@
       if (s) openIdCard(s);
     }));
   }
-  function openIdCard(s){
-    const win = window.open("", "_blank", "width=440,height=660");
-    if (!win) { alert("Please allow pop-ups to print ID cards."); return; }
+  function idCardHTML(s, compact){
+    const c = compact ? " compact" : "";
     const name = escapeHtml(s.name||"—");
     const sid = escapeHtml(s.studentId||"—");
     const cls = escapeHtml(classroomName(s.classRoomId));
     const dob = s.dob ? escapeHtml(formatDate(s.dob)) : "—";
     const gender = escapeHtml(s.gender||"—");
     const photo = s.photo
-      ? `<img class="photo" src="${s.photo}" alt="">`
-      : `<div class="photo ph-text">${escapeHtml(initials(s.name))}</div>`;
-    const school = "Student Management";
+      ? `<img class="photo${c}" src="${s.photo}" alt="">`
+      : `<div class="photo${c} ph-text">${escapeHtml(initials(s.name))}</div>`;
+    return `<div class="id-card${c}">
+      <div class="head"><div class="school">Student Management</div><div class="sub">Student ID Card</div><div class="ldiv"></div></div>
+      <div class="body">${photo}<div class="name">${name}</div>
+        <div class="meta"><div><span class="k">Student ID:</span> ${sid}</div>
+        <div><span class="k">Class:</span> ${cls}</div>
+        <div><span class="k">Gender:</span> ${gender} &nbsp;·&nbsp; <span class="k">DOB:</span> ${dob}</div></div>
+      <div class="barcode-box"><svg class="bc"></svg><div class="bval">${sid}</div></div>
+    </div></div>`;
+  }
+  function openIdCards(students){
+    const win = window.open("", "_blank", "width=940,height=700");
+    if (!win) { alert("Please allow pop-ups to print ID cards."); return; }
+    const bulk = students.length > 1;
+    const grid = bulk ? `<div class="card-grid-c">` : "";
+    const cards = students.map(s=>idCardHTML(s, bulk)).join("");
     win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">`
-      + `<title>Student ID Card</title>`
+      + `<title>Student ID Cards</title>`
       + `<style>`
-      + `body{margin:0;background:#dfe7f3;font-family:Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;}`
-      + `.id-card{width:340px;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(10,25,41,0.35);}`
+      + `body{margin:0;background:#dfe7f3;font-family:Arial,Helvetica,sans-serif;padding:20px;}`
+      + `.card-grid-c{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;max-width:1020px;margin:0 auto;}`
+      + `.id-card{width:340px;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(10,25,41,0.35);margin:0 auto;}`
+      + `.id-card.compact{width:100%;box-shadow:0 4px 12px rgba(10,25,41,0.2);}`
       + `.head{background:linear-gradient(135deg,#0a1929,#14314f);color:#fff;text-align:center;padding:18px 16px 14px;}`
       + `.head .school{font-size:16px;font-weight:700;letter-spacing:.5px;}`
       + `.head .sub{font-size:10px;opacity:.85;letter-spacing:3px;margin-top:4px;text-transform:uppercase;}`
       + `.head .ldiv{width:38px;height:2px;background:#3b82f6;margin:8px auto 0;border-radius:2px;}`
       + `.body{background:#fff;text-align:center;padding:0 18px 16px;}`
       + `.photo{width:96px;height:96px;border-radius:50%;object-fit:cover;margin:-48px auto 10px;border:4px solid #fff;background:#eef2f7;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:#14314f;box-shadow:0 2px 8px rgba(20,49,79,0.2);}`
+      + `.photo.compact{width:72px;height:72px;margin:-36px auto 8px;font-size:24px;}`
       + `.name{font-size:18px;font-weight:700;color:#0a1929;}`
+      + `.id-card.compact .name{font-size:15px;}`
       + `.meta{margin-top:12px;font-size:12px;color:#3f4d63;line-height:1.8;}`
       + `.meta .k{color:#14314f;font-weight:700;}`
       + `.barcode-box{background:#14314f;border-radius:8px;margin-top:14px;padding:10px 12px 8px;text-align:center;}`
       + `.barcode-box svg{max-width:100%;}`
       + `.barcode-box .bval{color:#fff;font-size:11px;letter-spacing:2px;margin-top:5px;}`
-      + `@media print{body{background:#fff;}.id-card{box-shadow:none;}}`
+      + `@media print{body{background:#fff;padding:0;}.id-card{box-shadow:none;page-break-inside:avoid;}.card-grid-c{max-width:none;}}`
       + `</style></head><body>`
-      + `<div class="id-card">`
-      + `<div class="head"><div class="school">${escapeHtml(school)}</div><div class="sub">Student ID Card</div><div class="ldiv"></div></div>`
-      + `<div class="body">${photo}<div class="name">${name}</div>`
-      + `<div class="meta"><div><span class="k">Student ID:</span> ${sid}</div>`
-      + `<div><span class="k">Class:</span> ${cls}</div>`
-      + `<div><span class="k">Gender:</span> ${gender} &nbsp;·&nbsp; <span class="k">DOB:</span> ${dob}</div></div>`
-      + `<div class="barcode-box"><svg id="bc"></svg><div class="bval">${sid}</div></div>`
-      + `</div></div>`
+      + `${grid}${cards}</div>`
       + `<script src="https:\/\/cdn.jsdelivr.net\/npm\/jsbarcode@3.11.6\/dist\/JsBarcode.all.min.js"><\/script>`
-      + `<script>try{JsBarcode("#bc",${JSON.stringify(s.studentId||"")},{format:"CODE128",displayValue:false,lineColor:"#ffffff",background:"transparent",height:48,width:1.6,margin:0});}catch(e){}setTimeout(function(){try{window.focus();window.print();}catch(e){}},500);<\/script>`
+      + `<script>document.querySelectorAll(".bc").forEach(function(svg){try{JsBarcode(svg,(svg.parentElement.querySelector(".bval")||{}).textContent||"",{format:"CODE128",displayValue:false,lineColor:"#ffffff",background:"transparent",height:48,width:1.6,margin:0});}catch(e){}});setTimeout(function(){try{window.focus();window.print();}catch(e){}},600);<\/script>`
       + `</body></html>`);
     win.document.close();
   }
+  function openIdCard(s){ openIdCards([s]); }
   function cancelStudentEdit(){
     editingStudentId = null;
     document.getElementById("studentForm").reset();
@@ -245,6 +257,16 @@
   });
   document.getElementById("studentSearch").addEventListener("input", function(){ studentSearch = this.value; renderStudents(); });
   document.getElementById("studentClassFilter").addEventListener("change", function(){ studentClassFilter = this.value; renderStudents(); });
+  document.getElementById("idcardPrintBtn").addEventListener("click", ()=>{
+    const v = document.getElementById("idcardStudentSelect").value;
+    if (!v){
+      if (state.students.length===0){ alert("No students to print yet."); return; }
+      openIdCards(state.students);
+    } else {
+      const s = state.students.find(x=>x.id===v);
+      if (s) openIdCard(s);
+    }
+  });
 
   // ---------- TEACHERS ----------
   let editingTeacherId = null;
