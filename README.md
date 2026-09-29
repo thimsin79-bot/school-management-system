@@ -54,13 +54,8 @@ lib/
   nav.ts            Sidebar definition
   printIdCards.ts   Opens the printable ID card window
   utils.ts          Formatting and helpers
-public/             Legacy vanilla HTML/CSS/JS build, kept for reference
 ```
 
 ## Usage
 
 All data is stored locally in your browser's localStorage under the key `sms_full_app_v1`. There is no backend and no bundled sample data — a fresh browser starts completely empty, so add a subject, a class room and a student to get started. Open multiple tabs and edits sync between them via the `storage` event.
-
-## Legacy build
-
-`public/index.html`, `public/css/styles.css` and `public/js/app.js` are the original vanilla version. They are no longer used by the app and are kept only for reference.
