@@ -1,6 +1,6 @@
 # Deploying the School Management System to Vercel
 
-This project is a static HTML/CSS/JS app, so it deploys to Vercel without a build step. This guide covers **automatic deploys** (every push to GitHub) and **manual CLI deploys**.
+This project is a Next.js (App Router) app, so Vercel builds it with `next build` and serves the output as a serverless/static deployment. This guide covers **automatic deploys** (every push to GitHub) and **manual CLI deploys**.
 
 ## Prerequisites
 
@@ -29,11 +29,11 @@ git push -u origin main
 
 1. Go to <https://vercel.com/new>
 2. Click **Import** next to your `school-management-system` repository
-3. Vercel auto-detects the static site. Verify/apply these settings:
-   - **Framework Preset:** `Other`
-   - **Build Command:** (leave empty)
-   - **Output Directory:** `public`
-   - **Install Command:** (leave empty)
+3. Vercel auto-detects Next.js. Verify/apply these settings:
+   - **Framework Preset:** `Next.js`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** (leave empty — Next.js handles this)
+   - **Install Command:** `npm install`
 4. Click **Deploy**
 
 ### 3. Done — auto-deploy is active
@@ -59,22 +59,18 @@ The CLI reads the included `vercel.json`:
 
 ```json
 {
-  "framework": null,
-  "buildCommand": "",
-  "outputDirectory": "public",
-  "devCommand": "npx http-server public -p 8080"
+  "$schema": "https://openapi.vercel.sh/vercel.json"
 }
 ```
 
-- `outputDirectory: "public"` — tells Vercel to serve the `public/` folder
-- No build command — the site is pure static HTML/CSS/JS
+It only declares the schema — everything else comes from Vercel's Next.js auto-detection.
 
 ## How the auto-deploy / GitHub integration works
 
 Vercel's GitHub app watches the repository. On every event it:
 
 1. Clones the latest commit (or PR branch)
-2. Skips the build (nothing to build) and serves from `public/`
+2. Runs `npm install` and `next build`
 3. Creates a **Production Deployment** for `main` or a **Preview Deployment** for PRs
 4. Posts the deploy status back to GitHub (checks on commits, links in PRs)
 
@@ -89,6 +85,7 @@ Vercel's GitHub app watches the repository. On every event it:
 
 - This app stores all data in **browser `localStorage`** — there is no backend or database.
 - Each browser/device holds its own data; there is no cloud sync.
+- Because the app is client-rendered against `localStorage`, a fresh browser starts with an empty database and never shares state with other visitors.
 
 ## Rollback
 
